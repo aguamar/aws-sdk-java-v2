@@ -20,7 +20,7 @@ import java.util.Date;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.core.Request;
 import software.amazon.awssdk.core.SdkRequest;
-import software.amazon.awssdk.core.auth.Aws4Signer;
+import software.amazon.awssdk.core.auth.signers.Aws4Signer;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.http.SdkHttpFullRequestAdapter;
 import software.amazon.awssdk.core.interceptor.Context;

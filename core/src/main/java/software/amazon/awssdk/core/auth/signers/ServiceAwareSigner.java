@@ -13,23 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.core.auth;
-
-import software.amazon.awssdk.http.SdkHttpFullRequest;
+package software.amazon.awssdk.core.auth.signers;
 
 /**
- * A strategy for applying cryptographic signatures to a request, proving
- * that the request was made by someone in possession of the given set of
- * credentials without transmitting the secret key over the wire.
+ * A signer that needs to know which service it is talking to.
  */
-
-public interface RequestSigner {
-
+public interface ServiceAwareSigner extends Signer {
     /**
-     * Sign the given request - modifies the
-     * passed-in request to apply the signature.
+     * Configure this signer with the name of the service it will be used
+     * to sign requests for.
      *
-     * @param request      The request to sign.
+     * @param value   The name of the service.
      */
-    SdkHttpFullRequest sign(SdkHttpFullRequest request);
+    void setServiceName(String value);
 }

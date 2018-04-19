@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import org.junit.Test;
+import software.amazon.awssdk.core.auth.signers.QueryStringSigner;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
 

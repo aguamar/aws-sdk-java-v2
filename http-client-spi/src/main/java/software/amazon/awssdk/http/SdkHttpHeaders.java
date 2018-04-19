@@ -29,7 +29,7 @@ import software.amazon.awssdk.utils.http.SdkHttpUtils;
 @SdkPublicApi
 @Immutable
 public interface SdkHttpHeaders {
-    /**
+    /**sdkre
      * Returns a map of all HTTP headers in this message, sorted in case-insensitive order by their header name.
      *
      * <p>This will never be null. If there are no headers an empty map is returned.</p>

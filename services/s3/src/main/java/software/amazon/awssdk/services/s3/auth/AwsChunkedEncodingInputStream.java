@@ -27,9 +27,10 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.core.auth.AbstractAwsSigner;
-import software.amazon.awssdk.core.auth.Aws4Signer;
-import software.amazon.awssdk.core.auth.SigningAlgorithm;
+import software.amazon.awssdk.core.auth.signers.AbstractAwsSigner;
+import software.amazon.awssdk.core.auth.signers.Aws4Signer;
+import software.amazon.awssdk.core.auth.signers.SigningAlgorithm;
+import software.amazon.awssdk.core.auth.varunknSigners.AWS4Signer;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.runtime.io.SdkInputStream;
 import software.amazon.awssdk.utils.BinaryUtils;
@@ -77,7 +78,7 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
 
     public AwsChunkedEncodingInputStream(InputStream in, byte[] kSigning,
                                          String datetime, String keyPath, String headerSignature,
-                                         Aws4Signer aws4Signer) {
+                                         AWS4Signer aws4Signer) {
         this(in, DEFAULT_BUFFER_SIZE, kSigning, datetime, keyPath, headerSignature, aws4Signer);
     }
 

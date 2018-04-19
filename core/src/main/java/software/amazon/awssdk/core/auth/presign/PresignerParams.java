@@ -21,7 +21,7 @@ import software.amazon.awssdk.annotations.SdkProtectedApi;
 import software.amazon.awssdk.annotations.SdkTestInternalApi;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.core.auth.SdkClock;
-import software.amazon.awssdk.core.runtime.auth.SignerProvider;
+import software.amazon.awssdk.core.auth.signers.SignerProvider;
 
 /**
  * Params object passed to the presigner extension class for a service client and also for {@link PresignerFacade}.

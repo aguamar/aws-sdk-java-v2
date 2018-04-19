@@ -28,6 +28,7 @@ import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import org.junit.Test;
 import software.amazon.awssdk.core.auth.internal.Aws4SignerUtils;
+import software.amazon.awssdk.core.auth.signers.Aws4Signer;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
 

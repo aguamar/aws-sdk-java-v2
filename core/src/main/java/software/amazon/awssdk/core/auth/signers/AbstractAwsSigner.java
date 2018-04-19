@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.core.auth;
+package software.amazon.awssdk.core.auth.signers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -33,6 +33,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.core.RequestClientOptions;
+import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.AwsSessionCredentials;
 import software.amazon.awssdk.core.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.runtime.io.SdkDigestInputStream;

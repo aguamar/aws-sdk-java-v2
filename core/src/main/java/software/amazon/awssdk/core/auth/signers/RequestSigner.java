@@ -13,14 +13,23 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.core.runtime.auth;
+package software.amazon.awssdk.core.auth.signers;
 
-import software.amazon.awssdk.annotations.SdkProtectedApi;
-import software.amazon.awssdk.core.auth.Signer;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
-@SdkProtectedApi
-public abstract class SignerProvider {
+/**
+ * A strategy for applying cryptographic signatures to a request, proving
+ * that the request was made by someone in possession of the given set of
+ * credentials without transmitting the secret key over the wire.
+ */
 
-    public abstract Signer getSigner(SignerProviderContext context);
+public interface RequestSigner {
 
+    /**
+     * Sign the given request - modifies the
+     * passed-in request to apply the signature.
+     *
+     * @param request      The request to sign.
+     */
+    SdkHttpFullRequest sign(SdkHttpFullRequest request);
 }

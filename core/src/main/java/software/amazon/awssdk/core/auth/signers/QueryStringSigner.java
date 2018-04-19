@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.core.auth;
+package software.amazon.awssdk.core.auth.signers;
 
 import static software.amazon.awssdk.core.interceptor.AwsExecutionAttributes.AWS_CREDENTIALS;
 import static software.amazon.awssdk.core.interceptor.AwsExecutionAttributes.TIME_OFFSET;
@@ -21,6 +21,8 @@ import static software.amazon.awssdk.core.interceptor.AwsExecutionAttributes.TIM
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.AwsSessionCredentials;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.interceptor.Context;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
@@ -115,7 +117,7 @@ public class QueryStringSigner extends AbstractAwsSigner {
     /**
      * For testing purposes only, to control the date used in signing.
      */
-    void overrideDate(Date date) {
+    public void overrideDate(Date date) {
         this.overriddenDate = date;
     }
 

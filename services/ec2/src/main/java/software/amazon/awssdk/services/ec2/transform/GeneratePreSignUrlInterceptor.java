@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.ec2.transform;
 
 import java.net.URI;
 import software.amazon.awssdk.core.SdkRequest;
-import software.amazon.awssdk.core.auth.Aws4Signer;
+import software.amazon.awssdk.core.auth.signers.Aws4Signer;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.http.SdkHttpFullRequestAdapter;
 import software.amazon.awssdk.core.interceptor.Context;

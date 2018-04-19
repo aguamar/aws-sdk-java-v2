@@ -15,9 +15,9 @@
 
 package software.amazon.awssdk.core.internal.auth;
 
-import software.amazon.awssdk.core.auth.Signer;
-import software.amazon.awssdk.core.runtime.auth.SignerProvider;
-import software.amazon.awssdk.core.runtime.auth.SignerProviderContext;
+import software.amazon.awssdk.core.auth.signers.Signer;
+import software.amazon.awssdk.core.auth.signers.SignerProvider;
+import software.amazon.awssdk.core.auth.signers.SignerProviderContext;
 
 public class DefaultSignerProvider extends SignerProvider {
 

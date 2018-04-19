@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.core.auth;
+package software.amazon.awssdk.core.auth.signers;
 
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.Mac;

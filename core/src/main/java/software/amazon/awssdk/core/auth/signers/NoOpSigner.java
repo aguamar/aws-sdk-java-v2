@@ -13,27 +13,19 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.core.auth;
+package software.amazon.awssdk.core.auth.signers;
 
-import java.util.Date;
 import software.amazon.awssdk.core.interceptor.Context;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
- * A request signer that has special-case logic to presign requests, generating
- * a URL which embeds the signature suitable for hyperlinking.
+ * A No-Op Signer Implementation.
  */
-public interface Presigner {
-    /**
-     * Signs the request by adding the signature to the URL rather than as a
-     * header. This method is expected to modify the passed-in request to
-     * add the signature.
-     *
-     * @param signingRequest The data required for performing the signing
-     * @param expiration    The time when this presigned URL will expire.
-     */
-    SdkHttpFullRequest presign(Context.BeforeTransmission execution,
-                               ExecutionAttributes executionAttributes,
-                               Date expiration);
+public class NoOpSigner implements Signer {
+
+    @Override
+    public SdkHttpFullRequest sign(Context.BeforeTransmission execution, ExecutionAttributes executionAttributes) {
+        return execution.httpRequest();
+    }
 }

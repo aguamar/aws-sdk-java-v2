@@ -28,13 +28,13 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
-import software.amazon.awssdk.core.auth.Aws4Signer;
-import software.amazon.awssdk.core.auth.QueryStringSigner;
-import software.amazon.awssdk.core.auth.StaticSignerProvider;
+import software.amazon.awssdk.core.auth.signers.Aws4Signer;
+import software.amazon.awssdk.core.auth.signers.QueryStringSigner;
+import software.amazon.awssdk.core.auth.signers.StaticSignerProvider;
 import software.amazon.awssdk.core.client.builder.DefaultClientBuilder;
 import software.amazon.awssdk.core.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.core.config.defaults.ServiceBuilderConfigurationDefaults;
-import software.amazon.awssdk.core.runtime.auth.SignerProvider;
+import software.amazon.awssdk.core.auth.signers.SignerProvider;
 import software.amazon.awssdk.utils.AttributeMap;
 
 public class BaseClientBuilderClass implements ClassSpec {

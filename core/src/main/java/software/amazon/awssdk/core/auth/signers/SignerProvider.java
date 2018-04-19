@@ -13,17 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.core.auth;
+package software.amazon.awssdk.core.auth.signers;
 
-/**
- * A signer that needs to know which region it is talking to.
- */
-public interface RegionAwareSigner extends Signer {
-    /**
-     * Configure this signer with the name of the region it will be used
-     * to sign requests for.
-     *
-     * @param value   The name of the region.
-     */
-    void setRegionName(String value);
+import software.amazon.awssdk.annotations.SdkProtectedApi;
+
+@SdkProtectedApi
+public abstract class SignerProvider {
+
+    public abstract Signer getSigner(SignerProviderContext context);
+
 }

@@ -26,7 +26,7 @@ import software.amazon.awssdk.annotations.SdkProtectedApi;
 import software.amazon.awssdk.core.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.core.interceptor.ClasspathInterceptorChainFactory;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
-import software.amazon.awssdk.core.runtime.auth.SignerProvider;
+import software.amazon.awssdk.core.auth.signers.SignerProvider;
 
 /**
  * An implementation of {@link ClientConfigurationDefaults} that can be used by client builders to define their service defaults.

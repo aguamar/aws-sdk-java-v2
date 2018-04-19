@@ -18,14 +18,15 @@ package software.amazon.awssdk.core.http.pipeline.stages;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.auth.AwsCredentials;
 import software.amazon.awssdk.core.auth.CanHandleNullCredentials;
-import software.amazon.awssdk.core.auth.Signer;
+import software.amazon.awssdk.core.auth.signers.Signer;
+import software.amazon.awssdk.core.auth.signers.SignerProvider;
 import software.amazon.awssdk.core.http.ExecutionContext;
 import software.amazon.awssdk.core.http.HttpClientDependencies;
 import software.amazon.awssdk.core.http.InterruptMonitor;
 import software.amazon.awssdk.core.http.pipeline.RequestToRequestPipeline;
 import software.amazon.awssdk.core.interceptor.AwsExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
-import software.amazon.awssdk.core.runtime.auth.SignerProviderContext;
+import software.amazon.awssdk.core.auth.signers.SignerProviderContext;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
@@ -70,7 +71,7 @@ public class SigningStage implements RequestToRequestPipeline {
     }
 
     /**
-     * Obtain a signer from the {@link software.amazon.awssdk.core.runtime.auth.SignerProvider}.
+     * Obtain a signer from the {@link SignerProvider}.
      */
     private Signer newSigner(final SdkHttpFullRequest request, RequestExecutionContext context) {
         final SignerProviderContext.Builder signerProviderContext = SignerProviderContext

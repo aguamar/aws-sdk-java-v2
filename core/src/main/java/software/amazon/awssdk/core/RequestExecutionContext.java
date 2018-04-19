@@ -16,11 +16,12 @@
 package software.amazon.awssdk.core;
 
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
+import software.amazon.awssdk.core.auth.signers.Signer;
 import software.amazon.awssdk.core.http.ExecutionContext;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptorChain;
 import software.amazon.awssdk.core.internal.http.timers.client.ClientExecutionAbortTrackerTask;
-import software.amazon.awssdk.core.runtime.auth.SignerProvider;
+import software.amazon.awssdk.core.auth.signers.SignerProvider;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.utils.Validate;
 
@@ -82,7 +83,7 @@ public final class RequestExecutionContext {
     }
 
     /**
-     * @return SignerProvider used to obtain an instance of a {@link software.amazon.awssdk.core.auth.Signer}.
+     * @return SignerProvider used to obtain an instance of a {@link Signer}.
      */
     public SignerProvider signerProvider() {
         return executionContext.signerProvider();

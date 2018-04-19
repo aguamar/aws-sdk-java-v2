@@ -7,7 +7,7 @@ import javax.annotation.Generated;
 import software.amazon.awssdk.core.ImmutableRequest;
 import software.amazon.awssdk.core.SignableRequest;
 </#if>
-import software.amazon.awssdk.core.auth.RequestSigner;
+import software.amazon.awssdk.core.auth.signers.RequestSigner;
 import ${metadata.fullClientPackageName}.${metadata.syncInterface};
 import ${metadata.fullClientPackageName}.${metadata.syncInterface}Builder;
 

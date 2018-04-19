@@ -21,8 +21,8 @@ import static software.amazon.awssdk.utils.Validate.validState;
 import java.io.IOException;
 import java.io.InputStream;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
-import software.amazon.awssdk.core.auth.Aws4Signer;
-import software.amazon.awssdk.core.auth.internal.Aws4SignerRequestParams;
+import software.amazon.awssdk.core.auth.internal.Aws4SignerRequestParamsNew;
+import software.amazon.awssdk.core.auth.varunknSigners.AWS4Signer;
 import software.amazon.awssdk.core.exception.ResetException;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -34,7 +34,7 @@ import software.amazon.awssdk.utils.BinaryUtils;
 /**
  * AWS4 signer implementation for AWS S3
  */
-public class AwsS3V4Signer extends Aws4Signer {
+public class AwsS3V4Signer extends AWS4Signer {
     private static final String CONTENT_SHA_256 = "STREAMING-AWS4-HMAC-SHA256-PAYLOAD";
 
     /**
@@ -53,7 +53,7 @@ public class AwsS3V4Signer extends Aws4Signer {
      * the canonical URI.
      */
     public AwsS3V4Signer() {
-        super(false);
+
     }
 
     /**
@@ -62,7 +62,7 @@ public class AwsS3V4Signer extends Aws4Signer {
     @Override
     protected void processRequestPayload(SdkHttpFullRequest.Builder requestBuilder,
                                          byte[] signature, byte[] signingKey,
-                                         Aws4SignerRequestParams signerRequestParams) {
+                                         Aws4SignerRequestParamsNew signerRequestParams) {
         if (useChunkEncoding(signerRequestParams)) {
             AwsChunkedEncodingInputStream chunkEncodededStream = new AwsChunkedEncodingInputStream(
                     signerRequestParams.httpRequest().content(), signingKey,
@@ -74,7 +74,7 @@ public class AwsS3V4Signer extends Aws4Signer {
     }
 
     @Override
-    protected String calculateContentHashPresign(Aws4SignerRequestParams signerRequestParams,
+    protected String calculateContentHashPresign(Aws4SignerRequestParamsNew signerRequestParams,
                                                  SdkHttpFullRequest.Builder mutableRequest) {
         return "UNSIGNED-PAYLOAD";
     }
@@ -85,7 +85,7 @@ public class AwsS3V4Signer extends Aws4Signer {
      * method which calculates the hash of the whole content for signing.
      */
     @Override
-    protected String calculateContentHash(Aws4SignerRequestParams signerRequestParams,
+    protected String calculateContentHash(Aws4SignerRequestParamsNew signerRequestParams,
                                           SdkHttpFullRequest.Builder mutableRequest) {
         // To be consistent with other service clients using sig-v4,
         // we just set the header as "required", and AWS4Signer.sign() will be
@@ -134,7 +134,7 @@ public class AwsS3V4Signer extends Aws4Signer {
     /**
      * Determine whether to use aws-chunked for signing
      */
-    private boolean useChunkEncoding(Aws4SignerRequestParams signerRequestParams) {
+    private boolean useChunkEncoding(Aws4SignerRequestParamsNew signerRequestParams) {
         // If chunked encoding is explicitly disabled through client options return right here.
         // Chunked encoding only makes sense to do when the payload is signed
         if (!isPayloadSigningEnabled(signerRequestParams.httpRequest()) ||
@@ -173,7 +173,7 @@ public class AwsS3V4Signer extends Aws4Signer {
      * method will wrap the stream by SdkBufferedInputStream if it is not
      * mark-supported.
      */
-    private static long getContentLength(Aws4SignerRequestParams signerParams) throws IOException {
+    private static long getContentLength(Aws4SignerRequestParamsNew signerParams) throws IOException {
         final InputStream content = signerParams.httpRequest().content();
         validState(content.markSupported(), "Request input stream must have been made mark-and-resettable");
 

@@ -30,12 +30,12 @@ import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.core.auth.Presigner;
+import software.amazon.awssdk.core.auth.signers.Presigner;
 import software.amazon.awssdk.core.interceptor.AwsExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.InterceptorContext;
-import software.amazon.awssdk.core.runtime.auth.SignerProvider;
-import software.amazon.awssdk.core.runtime.auth.SignerProviderContext;
+import software.amazon.awssdk.core.auth.signers.SignerProvider;
+import software.amazon.awssdk.core.auth.signers.SignerProviderContext;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
