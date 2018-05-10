@@ -16,8 +16,8 @@
 package software.amazon.awssdk.core.config;
 
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
+import software.amazon.awssdk.core.auth.signer_spi.Signer;
 import software.amazon.awssdk.core.regions.Region;
-import software.amazon.awssdk.core.runtime.auth.SignerProvider;
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
@@ -47,7 +47,7 @@ public class AdvancedClientOption<T> extends AttributeMap.Key<T> {
      * Configure the signer factory that should be used when generating signers in communication with AWS.
      */
     @ReviewBeforeRelease("This should either be changed when we refactor signers, or the comment should be expanded upon.")
-    public static final AdvancedClientOption<SignerProvider> SIGNER_PROVIDER = new AdvancedClientOption<>(SignerProvider.class);
+    public static final AdvancedClientOption<Signer> SIGNER = new AdvancedClientOption<>(Signer.class);
 
     /**
      * AWS Region the client was configured with. Note that this is not always the signing region in the case of global

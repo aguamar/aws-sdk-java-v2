@@ -72,7 +72,7 @@ abstract class BaseClientHandler {
                                                                      .request(originalRequest)
                                                                      .build())
                                .executionAttributes(executionAttributes)
-                               .signerProvider(overrideConfiguration.advancedOption(AdvancedClientOption.SIGNER_PROVIDER))
+                               .signer(overrideConfiguration.advancedOption(AdvancedClientOption.SIGNER))
                                .build();
     }
 

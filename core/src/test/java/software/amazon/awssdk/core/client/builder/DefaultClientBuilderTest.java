@@ -24,7 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static software.amazon.awssdk.core.config.AdvancedClientOption.ENABLE_DEFAULT_REGION_DETECTION;
-import static software.amazon.awssdk.core.config.AdvancedClientOption.SIGNER_PROVIDER;
+import static software.amazon.awssdk.core.config.AdvancedClientOption.SIGNER;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -41,7 +41,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.core.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.core.auth.Aws4Signer;
-import software.amazon.awssdk.core.auth.StaticSignerProvider;
+import software.amazon.awssdk.core.auth.signer_spi.Signer;
 import software.amazon.awssdk.core.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.core.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.core.config.ImmutableSyncClientConfiguration;
@@ -67,7 +67,7 @@ public class DefaultClientBuilderTest {
             .build();
 
     private static final String ENDPOINT_PREFIX = "prefix";
-    private static final StaticSignerProvider TEST_SIGNER_PROVIDER = StaticSignerProvider.create(new Aws4Signer());
+    private static final Signer TEST_SIGNER =new Aws4Signer();
     private static final URI ENDPOINT = URI.create("https://example.com");
 
     @Mock
@@ -85,8 +85,8 @@ public class DefaultClientBuilderTest {
     @Test
     public void buildIncludesServiceDefaults() {
         TestClient client = testClientBuilder().region(Region.US_WEST_1).build();
-        assertThat(client.syncClientConfiguration.overrideConfiguration().advancedOption(SIGNER_PROVIDER))
-                .isEqualTo(TEST_SIGNER_PROVIDER);
+        assertThat(client.syncClientConfiguration.overrideConfiguration().advancedOption(SIGNER))
+                .isEqualTo(TEST_SIGNER);
         assertThat(client.signingRegion).isNotNull();
     }
 
@@ -214,7 +214,7 @@ public class DefaultClientBuilderTest {
     private ClientBuilder<TestClientBuilder, TestClient> testClientBuilder() {
         ClientOverrideConfiguration overrideConfig =
                 ClientOverrideConfiguration.builder()
-                                           .advancedOption(SIGNER_PROVIDER, TEST_SIGNER_PROVIDER)
+                                           .advancedOption(SIGNER, TEST_SIGNER)
                                            .advancedOption(ENABLE_DEFAULT_REGION_DETECTION, false)
                                            .build();
 
@@ -225,7 +225,7 @@ public class DefaultClientBuilderTest {
     private ClientBuilder<TestAsyncClientBuilder, TestAsyncClient> testAsyncClientBuilder() {
         ClientOverrideConfiguration overrideConfig =
                 ClientOverrideConfiguration.builder()
-                                           .advancedOption(SIGNER_PROVIDER, TEST_SIGNER_PROVIDER)
+                                           .advancedOption(SIGNER, TEST_SIGNER)
                                            .advancedOption(ENABLE_DEFAULT_REGION_DETECTION, false)
                                            .build();
 
@@ -268,7 +268,7 @@ public class DefaultClientBuilderTest {
                 @Override
                 protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
                     ClientOverrideConfiguration config = builder.build();
-                    builder.advancedOption(SIGNER_PROVIDER, applyDefault(config.advancedOption(SIGNER_PROVIDER), () -> null));
+                    builder.advancedOption(SIGNER, applyDefault(config.advancedOption(SIGNER), () -> null));
                 }
             };
         }
@@ -310,7 +310,7 @@ public class DefaultClientBuilderTest {
                 @Override
                 protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
                     ClientOverrideConfiguration config = builder.build();
-                    builder.advancedOption(SIGNER_PROVIDER, applyDefault(config.advancedOption(SIGNER_PROVIDER), () -> null));
+                    builder.advancedOption(SIGNER, applyDefault(config.advancedOption(SIGNER), () -> null));
                 }
             };
         }

@@ -29,12 +29,10 @@ import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.core.auth.Aws4Signer;
-import software.amazon.awssdk.core.auth.QueryStringSigner;
-import software.amazon.awssdk.core.auth.StaticSignerProvider;
+import software.amazon.awssdk.core.auth.signer_spi.Signer;
 import software.amazon.awssdk.core.client.builder.DefaultClientBuilder;
 import software.amazon.awssdk.core.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.core.config.defaults.ServiceBuilderConfigurationDefaults;
-import software.amazon.awssdk.core.runtime.auth.SignerProvider;
 import software.amazon.awssdk.utils.AttributeMap;
 
 public class BaseClientBuilderClass implements ClassSpec {
@@ -73,7 +71,7 @@ public class BaseClientBuilderClass implements ClassSpec {
 
         builder.addMethod(serviceEndpointPrefixMethod());
         builder.addMethod(serviceDefaultsMethod());
-        builder.addMethod(defaultSignerProviderMethod());
+        builder.addMethod(defaultSignerMethod());
 
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
             builder.addMethod(setAdvancedConfigurationMethod())
@@ -108,7 +106,7 @@ public class BaseClientBuilderClass implements ClassSpec {
                          .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
                          .returns(ClientConfigurationDefaults.class)
                          .addCode("return $T.builder()\n", ServiceBuilderConfigurationDefaults.class)
-                         .addCode("         .defaultSignerProvider(this::defaultSignerProvider)\n")
+                         .addCode("         .defaultSigner(this::defaultSigner)\n")
                          .addCode("         .addRequestHandlerPath($S)\n", requestHandlerPath)
                          .addCode("         .crc32FromCompressedDataEnabled($L)\n", crc32FromCompressedDataEnabled)
                          .addCode("         .build();\n")
@@ -156,9 +154,9 @@ public class BaseClientBuilderClass implements ClassSpec {
                          .build();
     }
 
-    private MethodSpec defaultSignerProviderMethod() {
-        return MethodSpec.methodBuilder("defaultSignerProvider")
-                         .returns(SignerProvider.class)
+    private MethodSpec defaultSignerMethod() {
+        return MethodSpec.methodBuilder("defaultSigner")
+                         .returns(Signer.class)
                          .addModifiers(Modifier.PRIVATE)
                          .addCode(signerDefinitionMethodBody())
                          .build();
@@ -179,31 +177,16 @@ public class BaseClientBuilderClass implements ClassSpec {
     }
 
     private CodeBlock v4SignerDefinitionMethodBody() {
-        return CodeBlock.of("$T signer = new $T();\n" +
-                            "signer.setServiceName($S);\n" +
-                            "signer.setRegionName(signingRegion().value());\n" +
-                            "return $T.create(signer);\n",
-                            Aws4Signer.class,
-                            Aws4Signer.class,
-                            model.getMetadata().getSigningName(),
-                            StaticSignerProvider.class);
+        return CodeBlock.of("return new $T();", Aws4Signer.class);
     }
 
     private CodeBlock v2SignerDefinitionMethodBody() {
-        return CodeBlock.of("return $T.create(new $T());\n",
-                            StaticSignerProvider.class,
-                            QueryStringSigner.class);
+        return CodeBlock.of("return StaticSignerProvider.create(new QueryStringSigner());");
     }
 
     private CodeBlock s3SignerDefinitionMethodBody() {
-        return CodeBlock.of("$T signer = new $T();\n" +
-                            "signer.setServiceName(\"$L\");\n" +
-                            "signer.setRegionName(signingRegion().value());\n" +
-                            "return $T.create(signer);\n",
-                            ClassName.get("software.amazon.awssdk.services.s3", "AwsS3V4Signer"),
-                            ClassName.get("software.amazon.awssdk.services.s3", "AwsS3V4Signer"),
-                            model.getMetadata().getSigningName(),
-                            StaticSignerProvider.class);
+        return CodeBlock.of("return new $T();\n",
+                            ClassName.get("software.amazon.awssdk.services.s3", "AwsS3V4Signer"));
     }
 
     @Override

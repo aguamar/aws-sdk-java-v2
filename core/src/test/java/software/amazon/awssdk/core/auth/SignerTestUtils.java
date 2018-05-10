@@ -16,27 +16,31 @@
 package software.amazon.awssdk.core.auth;
 
 import java.util.Date;
-
-import software.amazon.awssdk.core.http.NoopTestRequest;
+import software.amazon.awssdk.core.auth.signer_spi.Presigner;
+import software.amazon.awssdk.core.auth.signer_spi.PresignerParams;
+import software.amazon.awssdk.core.auth.signer_spi.Signer;
+import software.amazon.awssdk.core.auth.signer_spi.SignerContext;
+import software.amazon.awssdk.core.auth.signer_spi.SignerParams;
 import software.amazon.awssdk.core.interceptor.AwsExecutionAttributes;
-import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
-import software.amazon.awssdk.core.interceptor.InterceptorContext;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 public class SignerTestUtils {
     public static SdkHttpFullRequest signRequest(Signer signer,
                                                  SdkHttpFullRequest request,
                                                  AwsCredentials credentials) {
-        return signer.sign(InterceptorContext.builder().request(NoopTestRequest.builder().build()).httpRequest(request).build(),
-                           new ExecutionAttributes().putAttribute(AwsExecutionAttributes.AWS_CREDENTIALS, credentials));
+        SignerParams signerParams = new SignerParams();
+        signerParams.setAwsCredentials(credentials);
+        return signer.sign(request, new SignerContext().putAttribute(AwsExecutionAttributes.SIGNER_PARAMS, signerParams));
     }
 
     public static SdkHttpFullRequest presignRequest(Presigner presigner,
                                                     SdkHttpFullRequest request,
                                                     AwsCredentials credentials,
                                                     Date expiration) {
-        return presigner.presign(InterceptorContext.builder().request(NoopTestRequest.builder().build()).httpRequest(request).build(),
-                                 new ExecutionAttributes().putAttribute(AwsExecutionAttributes.AWS_CREDENTIALS, credentials),
-                                 expiration);
+        PresignerParams signerParams = new PresignerParams();
+        signerParams.setAwsCredentials(credentials);
+        signerParams.setExpirationDate(expiration);
+
+        return presigner.presign(request, new SignerContext().putAttribute(AwsExecutionAttributes.SIGNER_PARAMS, signerParams));
     }
 }

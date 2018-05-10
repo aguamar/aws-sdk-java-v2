@@ -19,6 +19,7 @@ import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.core.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.signer_spi.SignerParams;
 import software.amazon.awssdk.core.regions.Region;
 
 /**
@@ -38,6 +39,7 @@ public final class AwsExecutionAttributes {
      */
     public static final ExecutionAttribute<AwsCredentials> AWS_CREDENTIALS = new ExecutionAttribute<>("AwsCredentials");
 
+    public static final ExecutionAttribute<SignerParams> SIGNER_PARAMS = new ExecutionAttribute<>("SignerParams");
     /**
      * The key under which the request config is stored.
      */

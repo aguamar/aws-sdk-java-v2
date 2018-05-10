@@ -18,14 +18,15 @@ package software.amazon.awssdk.core.http.pipeline.stages;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.auth.AwsCredentials;
 import software.amazon.awssdk.core.auth.CanHandleNullCredentials;
-import software.amazon.awssdk.core.auth.Signer;
+import software.amazon.awssdk.core.auth.signer_spi.Signer;
+import software.amazon.awssdk.core.auth.signer_spi.SignerContext;
+import software.amazon.awssdk.core.auth.signer_spi.SignerParams;
 import software.amazon.awssdk.core.http.ExecutionContext;
 import software.amazon.awssdk.core.http.HttpClientDependencies;
 import software.amazon.awssdk.core.http.InterruptMonitor;
 import software.amazon.awssdk.core.http.pipeline.RequestToRequestPipeline;
 import software.amazon.awssdk.core.interceptor.AwsExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
-import software.amazon.awssdk.core.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
@@ -45,7 +46,9 @@ public class SigningStage implements RequestToRequestPipeline {
      */
     public SdkHttpFullRequest execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         InterruptMonitor.checkInterrupted();
-        return signRequest(request, context);
+        SdkHttpFullRequest signedReq = signRequest(request, context);
+        System.out.println(signedReq);
+        return signedReq;
     }
 
     /**
@@ -54,12 +57,28 @@ public class SigningStage implements RequestToRequestPipeline {
     private SdkHttpFullRequest signRequest(SdkHttpFullRequest request, RequestExecutionContext context) {
         final AwsCredentials credentials = context.executionAttributes().getAttribute(AwsExecutionAttributes.AWS_CREDENTIALS);
         updateInterceptorContext(request, context.executionContext());
-        Signer signer = newSigner(request, context);
+        Signer signer = context.signer();
         if (shouldSign(signer, credentials)) {
             adjustForClockSkew(context.executionAttributes());
-            return signer.sign(context.executionContext().interceptorContext(), context.executionAttributes());
+
+            //TODO how to pass signerContext
+            return signer.sign(request, constructSignerParams(context.executionAttributes()));
         }
         return request;
+    }
+
+    private SignerContext constructSignerParams(ExecutionAttributes executionAttributes) {
+        SignerParams signerParams = new SignerParams();
+        signerParams.setAwsCredentials(executionAttributes.getAttribute(AwsExecutionAttributes.AWS_CREDENTIALS));
+        signerParams.setSigningName("dynamodb");//executionAttributes.getAttribute(AwsExecutionAttributes.SERVICE_NAME));
+        signerParams.setRegion(executionAttributes.getAttribute(AwsExecutionAttributes.AWS_REGION));
+
+        Integer offset = executionAttributes.getAttribute(AwsExecutionAttributes.TIME_OFFSET);
+        signerParams.setTimeOffset(offset);
+
+        SignerContext signerContext = new SignerContext();
+        signerContext.putAttribute(AwsExecutionAttributes.SIGNER_PARAMS, signerParams);
+        return signerContext;
     }
 
     /**
@@ -67,17 +86,6 @@ public class SigningStage implements RequestToRequestPipeline {
      */
     private void updateInterceptorContext(SdkHttpFullRequest request, ExecutionContext executionContext) {
         executionContext.interceptorContext(executionContext.interceptorContext().copy(b -> b.httpRequest(request)));
-    }
-
-    /**
-     * Obtain a signer from the {@link software.amazon.awssdk.core.runtime.auth.SignerProvider}.
-     */
-    private Signer newSigner(final SdkHttpFullRequest request, RequestExecutionContext context) {
-        final SignerProviderContext.Builder signerProviderContext = SignerProviderContext
-                .builder()
-                .withRequest(request)
-                .withRequestConfig(context.requestConfig());
-        return context.signerProvider().getSigner(signerProviderContext.build());
     }
 
     /**

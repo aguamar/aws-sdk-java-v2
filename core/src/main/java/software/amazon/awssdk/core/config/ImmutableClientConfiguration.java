@@ -54,8 +54,8 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
         // Ensure they have configured something that allows us to derive the endpoint
         Validate.validState(endpoint() != null, "The endpoint could not be determined.");
 
-        requireField("overrideConfiguration.advancedOption[SIGNER_PROVIDER]",
-                     overrideConfiguration().advancedOption(AdvancedClientOption.SIGNER_PROVIDER));
+        requireField("overrideConfiguration.advancedOption[SIGNER]",
+                     overrideConfiguration().advancedOption(AdvancedClientOption.SIGNER));
         requireField("overrideConfiguration.gzipEnabled", overrideConfiguration().gzipEnabled());
         requireField("overrideConfiguration.advancedOption[USER_AGENT_PREFIX]",
                      overrideConfiguration().advancedOption(AdvancedClientOption.USER_AGENT_PREFIX));

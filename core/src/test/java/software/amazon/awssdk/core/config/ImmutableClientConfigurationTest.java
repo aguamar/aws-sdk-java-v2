@@ -25,8 +25,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.junit.Test;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.core.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.auth.NoOpSigner;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
-import software.amazon.awssdk.core.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.core.retry.RetryPolicy;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
@@ -36,7 +36,7 @@ import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
  */
 @SuppressWarnings("deprecation") // Intentional use of deprecated class
 public class ImmutableClientConfigurationTest {
-    private static final NoOpSignerProvider SIGNER_PROVIDER = new NoOpSignerProvider();
+    private static final NoOpSigner SIGNER = new NoOpSigner();
     private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = DefaultCredentialsProvider.create();
     private static final URI ENDPOINT = URI.create("https://www.example.com");
     private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1);
@@ -85,7 +85,7 @@ public class ImmutableClientConfigurationTest {
                                           .addAdditionalHttpHeader("header", "value")
                                           .advancedOption(AdvancedClientOption.USER_AGENT_PREFIX, "userAgentPrefix")
                                           .advancedOption(AdvancedClientOption.USER_AGENT_SUFFIX, "userAgentSuffix")
-                                          .advancedOption(AdvancedClientOption.SIGNER_PROVIDER, SIGNER_PROVIDER)
+                                          .advancedOption(AdvancedClientOption.SIGNER, SIGNER)
                                           .advancedOption(AdvancedClientOption.ENABLE_DEFAULT_REGION_DETECTION, false)
                                           .retryPolicy(RETRY_POLICY)
                                           .addExecutionInterceptor(EXECUTION_INTERCEPTOR)

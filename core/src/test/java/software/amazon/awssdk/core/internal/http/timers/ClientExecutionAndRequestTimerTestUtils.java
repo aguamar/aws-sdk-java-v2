@@ -21,8 +21,8 @@ import static org.junit.Assert.assertNull;
 import java.util.Collections;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import software.amazon.awssdk.core.Request;
+import software.amazon.awssdk.core.auth.NoOpSigner;
 import software.amazon.awssdk.core.http.AmazonHttpClient;
 import software.amazon.awssdk.core.http.ExecutionContext;
 import software.amazon.awssdk.core.http.HttpMethodName;
@@ -31,7 +31,6 @@ import software.amazon.awssdk.core.http.SdkHttpFullRequestAdapter;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptorChain;
 import software.amazon.awssdk.core.interceptor.InterceptorContext;
-import software.amazon.awssdk.core.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.core.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.core.internal.http.response.ErrorDuringUnmarshallingResponseHandler;
 import software.amazon.awssdk.core.internal.http.response.NullErrorResponseHandler;
@@ -126,7 +125,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
                                   .httpRequest(request)
                                   .build();
         return ExecutionContext.builder()
-                               .signerProvider(new NoOpSignerProvider())
+                               .signer(new NoOpSigner())
                                .interceptorChain(new ExecutionInterceptorChain(Collections.emptyList()))
                                .executionAttributes(new ExecutionAttributes())
                                .interceptorContext(incerceptorContext)
