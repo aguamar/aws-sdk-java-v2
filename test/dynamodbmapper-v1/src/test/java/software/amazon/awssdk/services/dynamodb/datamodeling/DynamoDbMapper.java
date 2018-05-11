@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodb.datamodeling;
 
+import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toMap;
 import static software.amazon.awssdk.services.dynamodb.model.KeyType.HASH;
 import static software.amazon.awssdk.services.dynamodb.model.KeyType.RANGE;
@@ -34,7 +35,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.awscore.retry.AwsDefaultRetrySettings;
+import software.amazon.awssdk.awscore.retry.AwsRetryPolicy;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.awscore.AwsRequest;
 import software.amazon.awssdk.awscore.AwsRequestOverrideConfig;
@@ -1864,9 +1868,9 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
                    RetryUtils.isRequestEntityTooLargeException((SdkServiceException) exception);
         }
 
+        @ReviewBeforeRelease("update this to use service specific throttling condition")
         private boolean isThrottling() {
-            return exception instanceof SdkException &&
-                   RetryUtils.isThrottlingException((SdkException) exception);
+            return AwsRetryPolicy.AWS_DEFAULT_THROTTLING_CONDITION.isThrottlingException(exception);
         }
 
         private int size() {

@@ -23,7 +23,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.core.retry.backoff.BackoffStrategy;
+import software.amazon.awssdk.core.retry.conditions.ClockSkewCondition;
 import software.amazon.awssdk.core.retry.conditions.RetryCondition;
+import software.amazon.awssdk.core.retry.conditions.ThrottlingCondition;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RetryPolicyTest {
@@ -43,6 +45,13 @@ public class RetryPolicyTest {
     public void nullBackoffStrategy_UsesDefaultBackoffStrategy() {
         RetryPolicy policy = RetryPolicy.builder().retryCondition(retryCondition).backoffStrategy(backoffStrategy).build();
         assertThat(policy.toBuilder().backoffStrategy()).isEqualToComparingFieldByField(BackoffStrategy.defaultStrategy());
+    }
+
+    @Test
+    public void nullClockSkewThrottlingCondition_UseDefaultSetting() {
+        RetryPolicy policy = RetryPolicy.builder().build();
+        assertThat(policy.clockSkewCondition()).isEqualTo(ClockSkewCondition.DEFAULT);
+        assertThat(policy.throttlingCondition()).isEqualTo(ThrottlingCondition.DEFAULT);
     }
 
     @Test

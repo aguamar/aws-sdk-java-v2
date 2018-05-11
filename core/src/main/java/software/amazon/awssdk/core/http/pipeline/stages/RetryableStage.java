@@ -36,7 +36,6 @@ import software.amazon.awssdk.core.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.core.http.pipeline.RequestToResponsePipeline;
 import software.amazon.awssdk.core.retry.RetryHandler;
 import software.amazon.awssdk.core.retry.RetryPolicy;
-import software.amazon.awssdk.core.retry.RetryUtils;
 import software.amazon.awssdk.core.util.CapacityManager;
 import software.amazon.awssdk.core.util.ClockSkewUtil;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -148,7 +147,7 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
              * Checking for clock skew error again because we don't want to set the global time offset
              * for every service exception.
              */
-            if (RetryUtils.isClockSkewError(exception)) {
+            if (retryPolicy.clockSkewCondition().isClockSkewError(exception)) {
                 int clockSkew = ClockSkewUtil.parseClockSkewOffset(response.getHttpResponse());
                 dependencies.updateTimeOffset(clockSkew);
             }

@@ -15,29 +15,18 @@
 
 package software.amazon.awssdk.core.retry.conditions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import software.amazon.awssdk.annotations.SdkPublicApi;
-import software.amazon.awssdk.core.retry.RetryPolicyContext;
 
-/**
- * Composite retry condition that evaluates to true if any containing condition evaluates to true.
- */
 @SdkPublicApi
-public class OrRetryCondition implements RetryCondition {
+@FunctionalInterface
+public interface ClockSkewCondition {
 
-    private List<RetryCondition> conditions = new ArrayList<>();
+    ClockSkewCondition NONE = e -> false;
 
-    public OrRetryCondition(RetryCondition... conditions) {
-        Collections.addAll(this.conditions, conditions);
-    }
+    ClockSkewCondition DEFAULT = NONE;
 
     /**
-     * @return True if any condition returns true. False otherwise.
+     * Determine whether an exception is caused by clock skew error.
      */
-    @Override
-    public boolean shouldRetry(RetryPolicyContext context) {
-        return conditions.stream().anyMatch(r -> r.shouldRetry(context));
-    }
+    boolean isClockSkewError(Exception exception);
 }

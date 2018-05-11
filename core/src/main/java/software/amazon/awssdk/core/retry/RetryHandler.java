@@ -53,8 +53,7 @@ public class RetryHandler {
 
         final int retriesAttempted = requestCount - 1;
 
-        // Do not use retry capacity for throttling exceptions
-        if (!RetryUtils.isThrottlingException(exception)) {
+        if (!retryPolicy.throttlingCondition().isThrottlingException(exception)) {
             // See if we have enough available retry capacity to be able to execute this retry attempt.
             if (!retryCapacity.acquire(SdkDefaultRetrySettings.RETRY_THROTTLING_COST)) {
                 return false;

@@ -1,19 +1,22 @@
 /*
- * Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with
- * the License. A copy of the License is located at
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
  *
- * http://aws.amazon.com/apache2.0
+ *  http://aws.amazon.com/apache2.0
  *
- * or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
- * and limitations under the License.
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-package software.amazon.awssdk.core.retry;
+package software.amazon.awssdk.awscore.retry;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.awscore.retry.AwsRetryPolicy.AWS_DEFAULT_RETRY_CONDITION;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -22,13 +25,26 @@ import software.amazon.awssdk.core.exception.NonRetryableException;
 import software.amazon.awssdk.core.exception.RetryableException;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkServiceException;
-import software.amazon.awssdk.core.retry.conditions.RetryCondition;
+import software.amazon.awssdk.core.retry.RetryPolicyContext;
 
-public class DefaultRetryConditionTest {
+public class AwsRetryPolicyTest {
+
+    @Test
+    public void retriesOnRetryableErrorCodes() {
+        assertTrue(shouldRetry(applyErrorCode("PriorRequestNotComplete")));
+    }
 
     @Test
     public void retriesOnThrottlingExceptions() {
+        assertTrue(shouldRetry(applyErrorCode("ThrottlingException")));
+        assertTrue(shouldRetry(applyErrorCode("ThrottledException")));
         assertTrue(shouldRetry(applyStatusCode(429)));
+    }
+
+    @Test
+    public void retriesOnClockSkewErrors() {
+        assertTrue(shouldRetry(applyErrorCode("RequestTimeTooSkewed")));
+        assertTrue(shouldRetry(applyErrorCode("AuthFailure")));
     }
 
     @Test
@@ -71,10 +87,20 @@ public class DefaultRetryConditionTest {
         assertFalse(shouldRetry(applyStatusCode(404)));
     }
 
+    @Test
+    public void doesNotRetryOnNonRetryableErrorCode() {
+        assertFalse(shouldRetry(applyErrorCode("ValidationError")));
+    }
+
     private boolean shouldRetry(Consumer<RetryPolicyContext.Builder> builder) {
-        return RetryCondition.DEFAULT.shouldRetry(RetryPolicyContext.builder()
-                                                                    .apply(builder)
-                                                                    .build());
+        return AWS_DEFAULT_RETRY_CONDITION.shouldRetry(RetryPolicyContext.builder().apply(builder).build());
+    }
+
+    private Consumer<RetryPolicyContext.Builder> applyErrorCode(String errorCode) {
+        SdkServiceException exception = new SdkServiceException("");
+        exception.statusCode(404);
+        exception.errorCode(errorCode);
+        return b -> b.exception(exception);
     }
 
     private Consumer<RetryPolicyContext.Builder> applyStatusCode(Integer statusCode) {

@@ -15,32 +15,28 @@
 
 package software.amazon.awssdk.core.retry.conditions;
 
-import java.util.Set;
 import software.amazon.awssdk.annotations.SdkPublicApi;
 import software.amazon.awssdk.core.exception.SdkServiceException;
-import software.amazon.awssdk.core.retry.RetryPolicyContext;
 
 @SdkPublicApi
-public class RetryOnErrorCodeCondition implements RetryCondition {
+@FunctionalInterface
+public interface ThrottlingCondition {
 
-    private final Set<String> retryableErrorCodes;
+    ThrottlingCondition NONE = e -> false;
 
-    // TODO: Switch to varargs and Set.of()
-    public RetryOnErrorCodeCondition(Set<String> retryableErrorCodes) {
-        this.retryableErrorCodes = retryableErrorCodes;
+    ThrottlingCondition DEFAULT = new AndThrottlingCondition(
+        e -> e instanceof SdkServiceException && ((SdkServiceException) e).statusCode() == 429);
+
+    default OrThrottlingCondition or(ThrottlingCondition other) {
+        return new OrThrottlingCondition(this, other);
     }
 
-    @Override
-    public boolean shouldRetry(RetryPolicyContext context) {
-
-        Exception ex = context.exception();
-        if (ex != null && ex instanceof SdkServiceException) {
-            SdkServiceException exception = (SdkServiceException) ex;
-
-            if (retryableErrorCodes.contains(exception.errorCode())) {
-                return true;
-            }
-        }
-        return false;
+    default AndThrottlingCondition and(ThrottlingCondition other) {
+        return new AndThrottlingCondition(this, other);
     }
+
+    /**
+     * Determine whether an exception is caused by throttling.
+     */
+    boolean isThrottlingException(Exception exception);
 }

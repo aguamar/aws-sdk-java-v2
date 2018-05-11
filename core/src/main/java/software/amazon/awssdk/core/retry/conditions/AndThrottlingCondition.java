@@ -21,25 +21,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import software.amazon.awssdk.annotations.SdkPublicApi;
-import software.amazon.awssdk.core.retry.RetryPolicyContext;
 
 /**
- * Composite {@link RetryCondition} that evaluates to true when all contained retry conditions evaluate to true.
+ * Composite retry condition that evaluates to true if all contained retry conditions evaluate to true.
  */
 @SdkPublicApi
-public class AndRetryCondition implements RetryCondition {
+public class AndThrottlingCondition implements ThrottlingCondition {
 
-    private List<RetryCondition> conditions = new ArrayList<>();
+    private List<ThrottlingCondition> conditions = new ArrayList<>();
 
-    public AndRetryCondition(RetryCondition... conditions) {
+    public AndThrottlingCondition(ThrottlingCondition... conditions) {
         Collections.addAll(this.conditions, assertNotEmpty(conditions, "conditions"));
     }
 
     /**
-     * @return True if all conditions are true, false otherwise.
+     * @return True if any condition returns true. False otherwise.
      */
     @Override
-    public boolean shouldRetry(RetryPolicyContext context) {
-        return conditions.stream().allMatch(r -> r.shouldRetry(context));
+    public boolean isThrottlingException(Exception context) {
+        return conditions.stream().allMatch(retryCondition -> retryCondition.isThrottlingException(context));
     }
 }
