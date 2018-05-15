@@ -59,7 +59,7 @@ public class EndpointAddressInterceptor implements ExecutionInterceptor {
 
         if (advancedConfiguration == null || !advancedConfiguration.pathStyleAccessEnabled()) {
             sdkRequest.getValueForField("Bucket", String.class).ifPresent(b -> {
-                if (BucketUtils.isValidDnsBucketName(b, false)) {
+                if (BucketUtils.isValidDnsBucketName(b, false) && !b.contains(".")) {
                     changeToDnsEndpoint(mutableRequest, b);
                 }
             });
